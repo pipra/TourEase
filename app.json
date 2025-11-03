@@ -9,7 +9,8 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.TourEase"
     },
     "android": {
       "icon": "./assets/images/tourEase.png",
@@ -43,7 +44,7 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "5ebae64c-6417-4d77-af33-f854b00e9d3a"
+        "projectId": "c886dc78-9226-4532-bd3b-7c4dadfceec9"
       }
     }
   }
