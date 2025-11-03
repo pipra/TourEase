@@ -32,7 +32,7 @@ export default function RootLayout() {
                         const userData = userDoc.data();
                         
                         if (userData.userType === 'admin') {
-                            router.replace('/(admin)/dashboard');
+                            router.replace('/(admin)/overview');
                         } else if (userData.userType === 'guide') {
                             // Check if guide is approved
                             const guideDoc = await getDoc(doc(db, 'guides', user.uid));
