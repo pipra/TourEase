@@ -13,10 +13,10 @@ import {
     ScrollView,
     StyleSheet,
     Text,
-    TextInput,
     TouchableOpacity,
     View
 } from 'react-native';
+import { TextInput } from 'react-native-paper';
 import { auth, db } from '../(auth)/firebase';
 import { bookingStatusService } from '../../utils/bookingStatusService';
 // Notifications moved to dedicated notifications.jsx tab
@@ -1041,10 +1041,12 @@ export default function Profile() {
                                 <Text style={styles.modalTitle}>Edit Profile</Text>
                                 
                                 <TextInput
-                                    style={styles.editInput}
-                                    placeholder="Profile Picture URL (optional)"
+                                    label="Profile Picture URL (optional)"
                                     value={profileImageUrl}
                                     onChangeText={setProfileImageUrl}
+                                    style={styles.editInput}
+                                    mode="outlined"
+                                    left={<TextInput.Icon icon="image" />}
                                     multiline={false}
                                 />
                                 
@@ -1067,10 +1069,12 @@ export default function Profile() {
                                 /> */}
                                 
                                 <TextInput
-                                    style={styles.editInput}
-                                    placeholder="Location"
+                                    label="Location"
                                     value={editedUserData.location}
                                     onChangeText={(text) => setEditedUserData({ ...editedUserData, location: text })}
+                                    style={styles.editInput}
+                                    mode="outlined"
+                                    left={<TextInput.Icon icon="map-marker" />}
                                 />
                                 
                                 {/* <TextInput
@@ -1868,13 +1872,8 @@ const styles = StyleSheet.create({
         borderColor: '#6200EE',
     },
     editInput: {
-        borderWidth: 1,
-        borderColor: '#ddd',
-        borderRadius: 8,
-        padding: 12,
-        fontSize: 16,
         marginBottom: 15,
-        width: '100%',
+        backgroundColor: "white",
     },
     // Booking Status Change Modal Styles
     statusChangeHeader: {

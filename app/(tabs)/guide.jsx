@@ -1,8 +1,8 @@
 import { useLocalSearchParams } from 'expo-router';
 import { addDoc, collection, getDocs, query, where } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, FlatList, Image, Modal, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { TextInput } from 'react-native-paper';
+import { ActivityIndicator, Alert, FlatList, Image, Modal, RefreshControl, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { TextInput as PaperTextInput } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { auth, db } from '../(auth)/firebase';
 import { sendBookingRequestToGuide } from '../../utils/realtimeNotificationService';
@@ -341,18 +341,27 @@ const Guide = () => {
                 </View>
                 
                 {/* Search Bar */}
-                <View style={styles.searchContainer}>
-                    <TextInput
-                        label="Search by location, city or place..."
-                        value={searchQuery}
-                        onChangeText={setSearchQuery}
-                        mode="outlined"
-                        style={styles.searchInput}
-                        left={<TextInput.Icon icon="magnify" />}
-                        right={searchQuery.length > 0 ? (
-                            <TextInput.Icon icon="close-circle" onPress={() => setSearchQuery('')} />
-                        ) : null}
-                    />
+                <View style={styles.searchSection}>
+                    <View style={styles.searchContainer}>
+                        <TextInput
+                            style={styles.searchInput}
+                            placeholder="Enter city, place or location..."
+                            value={searchQuery}
+                            onChangeText={setSearchQuery}
+                            placeholderTextColor="#888"
+                        />
+                        <TouchableOpacity
+                            style={styles.searchButton}
+                            onPress={() => {/* Search is already filtered in real-time */}}
+                        >
+                            <Text style={styles.searchButtonText}>Search</Text>
+                        </TouchableOpacity>
+                    </View>
+                    {searchQuery.trim() !== "" && (
+                        <Text style={styles.searchResultText}>
+                            Showing results for &ldquo;{searchQuery}&rdquo;
+                        </Text>
+                    )}
                 </View>
             </View>
 
@@ -587,7 +596,7 @@ const Guide = () => {
                                     </View>
                                 )}
                                 
-                                <TextInput
+                                <PaperTextInput
                                     label="Number of Members (Max 10)"
                                     value={bookingForm.guests}
                                     onChangeText={(text) => {
@@ -600,11 +609,11 @@ const Guide = () => {
                                     keyboardType="numeric"
                                     style={styles.input}
                                     mode="outlined"
-                                    left={<TextInput.Icon icon="account-group" />}
+                                    left={<PaperTextInput.Icon icon="account-group" />}
                                     maxLength={2}
                                 />
                                 
-                                <TextInput
+                                <PaperTextInput
                                     label="Conditions & Special Requests (Optional)"
                                     value={bookingForm.message}
                                     onChangeText={(text) => setBookingForm({...bookingForm, message: text})}
@@ -612,7 +621,7 @@ const Guide = () => {
                                     numberOfLines={3}
                                     style={styles.input}
                                     mode="outlined"
-                                    left={<TextInput.Icon icon="message-text-outline" />}
+                                    left={<PaperTextInput.Icon icon="message-text-outline" />}
                                 />
                                 
                                 {bookingForm.guests && parseInt(bookingForm.guests) > 0 && selectedGuide.pricePerDay && (
@@ -780,12 +789,45 @@ const styles = StyleSheet.create({
         color: '#E8EAED',
         opacity: 0.9,
     },
-    searchContainer: {
+    searchSection: {
         paddingHorizontal: 20,
-        marginBottom: 10,
+        paddingBottom: 20,
+    },
+    searchContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: "#FFFFFF",
+        borderRadius: 12,
+        elevation: 3,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
     },
     searchInput: {
-        backgroundColor: 'white',
+        flex: 1,
+        paddingHorizontal: 16,
+        paddingVertical: 14,
+        fontSize: 16,
+        color: "#333",
+    },
+    searchButton: {
+        backgroundColor: "#6200EE",
+        paddingHorizontal: 20,
+        paddingVertical: 14,
+        borderTopRightRadius: 12,
+        borderBottomRightRadius: 12,
+    },
+    searchButtonText: {
+        color: "#FFFFFF",
+        fontWeight: "bold",
+        fontSize: 16,
+    },
+    searchResultText: {
+        marginTop: 10,
+        fontSize: 14,
+        color: "#ffffff",
+        fontStyle: "italic",
     },
     guidesSection: {
         flex: 1,
