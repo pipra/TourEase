@@ -41,21 +41,22 @@ export default function RootLayout() {
                             } else {
                                 // Guide not approved yet, sign them out
                                 await auth.signOut();
-                                router.replace('/');
+                                router.replace('/login');
                             }
-                        } 
-                        // else {
-                        //     // Regular user
-                        //     router.replace('/(tabs)/home');
-                        // }
-                    } 
-                    // else {
-                    //     // User document doesn't exist, go to home
-                    //     router.replace('/(tabs)/home');
-                    // }
-                } catch (_error) {
-                    // console.error('Error checking user type:', _error);
-                    // router.replace('/(tabs)/home');
+                        } else {
+                            // Regular customer user
+                            router.replace('/(tabs)/home');
+                        }
+                    } else {
+                        // User document doesn't exist, sign them out and redirect to login
+                        await auth.signOut();
+                        router.replace('/login');
+                    }
+                } catch (error) {
+                    console.error('Error checking user type:', error);
+                    // Sign out and redirect to login on error
+                    await auth.signOut();
+                    router.replace('/login');
                 }
             } else {
                 // User not signed in
