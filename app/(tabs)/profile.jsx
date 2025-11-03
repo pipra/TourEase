@@ -19,7 +19,8 @@ import {
 } from 'react-native';
 import { auth, db } from '../(auth)/firebase';
 import { bookingStatusService } from '../../utils/bookingStatusService';
-import { deleteNotification, listenForUserNotifications } from '../../utils/realtimeNotificationService';
+// Notifications moved to dedicated notifications.jsx tab
+// import { deleteNotification, listenForUserNotifications } from '../../utils/realtimeNotificationService';
 
 export default function Profile() {
     const [userData, setUserData] = useState(null);
@@ -45,7 +46,8 @@ export default function Profile() {
     const [initialLoadComplete, setInitialLoadComplete] = useState(false);
     
     // User notifications from RTDB
-    const [userNotifications, setUserNotifications] = useState([]);
+    // Notifications moved to dedicated notifications.jsx tab
+    // const [userNotifications, setUserNotifications] = useState([]);
 
     // Check auth state first
     useEffect(() => {
@@ -130,20 +132,11 @@ export default function Profile() {
             if (!currentUser?.uid) return;
 
             try {
-                // Listen for booking response notifications from guides
-                unsubscribe = listenForUserNotifications(currentUser.uid, (notifications) => {
-                    console.log('User notifications updated:', notifications.length);
-                    
-                    // Store notifications in state for display
-                    setUserNotifications(notifications);
-                    
-                    // Refresh bookings to show updated status
-                    fetchUserBookings();
-                });
-
-                console.log('User notification listener set up successfully');
+                // Notifications listener moved to dedicated notifications.jsx tab
+                // This component now only handles bookings and reviews
+                console.log('Profile loaded for user:', currentUser.uid);
             } catch (error) {
-                console.error('Error setting up notification listener:', error);
+                console.error('Error in profile setup:', error);
             }
         };
 
@@ -370,6 +363,7 @@ export default function Profile() {
                 },
                 {
                     text: 'Sign Out',
+                    
                     style: 'destructive',
                     onPress: async () => {
                         try {
@@ -912,66 +906,6 @@ export default function Profile() {
                         )}
                     </View>
                 );
-            case 'notifications':
-                return (
-                    <View style={styles.tabContent}>
-                        <Text style={styles.tabTitle}>My Notifications</Text>
-                        {userNotifications.length > 0 ? (
-                            <FlatList
-                                data={userNotifications}
-                                renderItem={({ item }) => (
-                                    <View style={styles.notificationCard}>
-                                        <View style={styles.notificationHeader}>
-                                            <Text style={styles.notificationTitle}>{item.title}</Text>
-                                            <TouchableOpacity
-                                                onPress={async () => {
-                                                    await deleteNotification(item.id, 'user');
-                                                }}
-                                                style={styles.deleteButton}
-                                            >
-                                                <MaterialIcons name="close" size={20} color="#666" />
-                                            </TouchableOpacity>
-                                        </View>
-                                        <Text style={styles.notificationMessage}>{item.message}</Text>
-                                        {item.data && (
-                                            <View style={styles.notificationDetails}>
-                                                <Text style={styles.notificationDetailText}>
-                                                    📍 {item.data.location}
-                                                </Text>
-                                                <Text style={styles.notificationDetailText}>
-                                                    📅 {item.data.dates}
-                                                </Text>
-                                                <Text style={styles.notificationDetailText}>
-                                                    💰 ৳{item.data.totalPrice}
-                                                </Text>
-                                            </View>
-                                        )}
-                                        <Text style={styles.notificationTime}>
-                                            {new Date(item.timestamp).toLocaleString('en-US', {
-                                                month: 'short',
-                                                day: 'numeric',
-                                                hour: '2-digit',
-                                                minute: '2-digit'
-                                            })}
-                                        </Text>
-                                    </View>
-                                )}
-                                keyExtractor={(item) => item.id}
-                                showsVerticalScrollIndicator={false}
-                                refreshControl={
-                                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-                                }
-                            />
-                        ) : (
-                            <View style={styles.emptyState}>
-                                <Text style={styles.emptyStateText}>No notifications yet</Text>
-                                <Text style={styles.emptyStateSubtext}>
-                                    You&apos;ll receive updates about your bookings here
-                                </Text>
-                            </View>
-                        )}
-                    </View>
-                );
             case 'reviews':
                 return (
                     <View style={styles.tabContent}>
@@ -1008,14 +942,14 @@ export default function Profile() {
                     {/* Header */}
                     <View style={styles.header}>
                         <Text style={styles.headerTitle}>Profile</Text>
-                        <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
+                        {/* <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
                             <Text style={styles.logoutText}>Sign Out</Text>
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
                     </View>
 
                     {/* Tab Navigation */}
                     <View style={styles.tabContainer}>
-                        {['profile', 'bookings', 'notifications', 'reviews'].map((tab) => (
+                        {['profile', 'bookings', 'reviews'].map((tab) => (
                             <TouchableOpacity
                                 key={tab}
                                 style={[
@@ -1036,9 +970,6 @@ export default function Profile() {
                                     activeTab === tab && styles.activeTabButtonText
                                 ]}>
                                     {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                                    {tab === 'notifications' && userNotifications.length > 0 && (
-                                        <Text style={styles.notificationBadge}> ({userNotifications.length})</Text>
-                                    )}
                                 </Text>
                             </TouchableOpacity>
                         ))}

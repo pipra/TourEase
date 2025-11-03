@@ -1,7 +1,8 @@
 import { useLocalSearchParams } from 'expo-router';
 import { addDoc, collection, getDocs, query, where } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, FlatList, Image, Modal, RefreshControl, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, FlatList, Image, Modal, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { TextInput } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { auth, db } from '../(auth)/firebase';
 import { sendBookingRequestToGuide } from '../../utils/realtimeNotificationService';
@@ -341,21 +342,17 @@ const Guide = () => {
                 
                 {/* Search Bar */}
                 <View style={styles.searchContainer}>
-                    <View style={styles.searchInputContainer}>
-                        <Text style={styles.searchIcon}>🔍</Text>
-                        <TextInput
-                            style={styles.searchInput}
-                            placeholder="Search by location, city or place..."
-                            value={searchQuery}
-                            onChangeText={setSearchQuery}
-                            placeholderTextColor="#999"
-                        />
-                        {searchQuery.length > 0 && (
-                            <TouchableOpacity onPress={() => setSearchQuery('')} style={styles.clearButton}>
-                                <Text style={styles.clearIcon}>✕</Text>
-                            </TouchableOpacity>
-                        )}
-                    </View>
+                    <TextInput
+                        label="Search by location, city or place..."
+                        value={searchQuery}
+                        onChangeText={setSearchQuery}
+                        mode="outlined"
+                        style={styles.searchInput}
+                        left={<TextInput.Icon icon="magnify" />}
+                        right={searchQuery.length > 0 ? (
+                            <TextInput.Icon icon="close-circle" onPress={() => setSearchQuery('')} />
+                        ) : null}
+                    />
                 </View>
             </View>
 
@@ -591,8 +588,7 @@ const Guide = () => {
                                 )}
                                 
                                 <TextInput
-                                    style={styles.input}
-                                    placeholder="Number of Members (Max 10)"
+                                    label="Number of Members (Max 10)"
                                     value={bookingForm.guests}
                                     onChangeText={(text) => {
                                         // Only allow numbers and limit to 10 guests maximum
@@ -602,16 +598,21 @@ const Guide = () => {
                                         }
                                     }}
                                     keyboardType="numeric"
+                                    style={styles.input}
+                                    mode="outlined"
+                                    left={<TextInput.Icon icon="account-group" />}
                                     maxLength={2}
                                 />
                                 
                                 <TextInput
-                                    style={[styles.input, styles.messageInput]}
-                                    placeholder="Conditions & special requests or message (optional)"
+                                    label="Conditions & Special Requests (Optional)"
                                     value={bookingForm.message}
                                     onChangeText={(text) => setBookingForm({...bookingForm, message: text})}
                                     multiline
                                     numberOfLines={3}
+                                    style={styles.input}
+                                    mode="outlined"
+                                    left={<TextInput.Icon icon="message-text-outline" />}
                                 />
                                 
                                 {bookingForm.guests && parseInt(bookingForm.guests) > 0 && selectedGuide.pricePerDay && (
@@ -783,36 +784,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         marginBottom: 10,
     },
-    searchInputContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#FFFFFF',
-        borderRadius: 15,
-        paddingHorizontal: 15,
-        elevation: 3,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-    },
-    searchIcon: {
-        fontSize: 18,
-        marginRight: 10,
-        color: '#666',
-    },
     searchInput: {
-        flex: 1,
-        paddingVertical: 15,
-        fontSize: 16,
-        color: '#333',
-    },
-    clearButton: {
-        padding: 5,
-    },
-    clearIcon: {
-        fontSize: 16,
-        color: '#999',
-        fontWeight: 'bold',
+        backgroundColor: 'white',
     },
     guidesSection: {
         flex: 1,
@@ -1094,14 +1067,8 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     input: {
-        borderWidth: 1,
-        borderColor: '#E0E0E0',
-        borderRadius: 12,
-        paddingHorizontal: 15,
-        paddingVertical: 15,
         marginBottom: 15,
-        fontSize: 16,
-        backgroundColor: '#F8F9FA',
+        backgroundColor: "white",
     },
     messageInput: {
         height: 80,

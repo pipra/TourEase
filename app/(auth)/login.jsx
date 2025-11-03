@@ -19,6 +19,7 @@ const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [testingNotification, setTestingNotification] = useState(false);
+    const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
     const handleTestNotification = async () => {
         setTestingNotification(true);
@@ -244,10 +245,16 @@ const Login = () => {
                             label="Password"
                             value={password}
                             onChangeText={setPassword}
-                            secureTextEntry
+                            secureTextEntry={!isPasswordVisible}
                             style={styles.input}
                             mode="outlined"
                             left={<TextInput.Icon icon="lock" />}
+                            right={
+                                <TextInput.Icon
+                                    icon={isPasswordVisible ? "eye-off" : "eye"}
+                                    onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+                                />
+                            }
                         />
                         <TouchableOpacity
                             onPress={() => router.push('/forgot-password')}

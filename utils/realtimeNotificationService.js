@@ -259,6 +259,8 @@ export function listenForUserNotifications(userUid, callback) {
             
             if (snapshot.exists()) {
                 const notifications = [];
+                const newNotifications = [];
+                const updates = {};
                 let totalCount = 0;
                 let filteredCount = 0;
                 
@@ -271,6 +273,7 @@ export function listenForUserNotifications(userUid, callback) {
                         id: notificationId,
                         type: notification.type,
                         user_uid: notification.user_uid,
+                        shown: notification.shown,
                         title: notification.title
                     });
                     
@@ -290,17 +293,47 @@ export function listenForUserNotifications(userUid, callback) {
                     if (isValidUserNotification) {
                         filteredCount++;
                         console.log('✅ Valid user notification accepted:', notification.type);
+                        
                         // Collect all notifications (shown and unshown)
                         notifications.push({
                             id: notificationId,
                             ...notification
                         });
+                        
+                        // Track new notifications for push alerts
+                        if (!notification.shown) {
+                            newNotifications.push({
+                                id: notificationId,
+                                ...notification
+                            });
+                            
+                            // Mark as shown (don't delete)
+                            updates[`user-notifications/${notificationId}/shown`] = true;
+                            updates[`user-notifications/${notificationId}/shownAt`] = new Date().toISOString();
+                        }
                     } else {
                         console.log('❌ Filtered out notification with type:', notification.type);
                     }
                 });
                 
                 console.log(`👤 Total notifications: ${totalCount}, Filtered: ${filteredCount}`);
+                
+                // Update all new notifications as shown
+                if (Object.keys(updates).length > 0) {
+                    await update(ref(rtdb), updates);
+                    console.log(`📱 Updated ${Object.keys(updates).length / 2} notifications as shown`);
+                }
+                
+                // Show push notifications for new ones only
+                for (const notification of newNotifications) {
+                    console.log('📱 Sending push notification to user:', notification.title);
+                    // Send local notification
+                    await sendTestNotification(
+                        notification.title,
+                        notification.message,
+                        notification.data
+                    );
+                }
                 
                 // Sort by timestamp, newest first
                 notifications.sort((a, b) => b.timestamp - a.timestamp);
