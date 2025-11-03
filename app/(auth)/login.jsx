@@ -173,8 +173,8 @@ const Login = () => {
                 
                 if (guideDoc.exists() && guideDoc.data().status === 'approved') {
                     // Guide is approved, allow login
-                    Alert.alert("Welcome Guide!", "Redirecting to guide dashboard...");
-                    router.replace('/(guide)/dashboard');
+                    Alert.alert("Welcome Guide!", "Redirecting to bookings...");
+                    router.replace('/(guide)/bookings');
                 } else {
                     // Check application status
                     const applicationDoc = await getDoc(doc(db, 'guide-applications', refreshedUser.uid));

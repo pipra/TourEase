@@ -37,7 +37,7 @@ export default function RootLayout() {
                             // Check if guide is approved
                             const guideDoc = await getDoc(doc(db, 'guides', user.uid));
                             if (guideDoc.exists()) {
-                                router.replace('/(guide)/dashboard');
+                                router.replace('/(guide)/bookings');
                             } else {
                                 // Guide not approved yet, sign them out
                                 await auth.signOut();
